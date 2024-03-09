@@ -8,30 +8,41 @@ const peer = new Peer(undefined, {
 const myvideo = document.createElement('video');
 myvideo.muted = true;
 
-
-navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: true,
-}).then(stream => {
-console.log('primero');
-
-    console.log(stream, 'propio');
-     addVideoStream(myvideo, stream);
-     peer.on('call', function (call){// answer the call
-        console.log('te estoy respondiendo');
-        call.answer(stream);
+if(USER === 'admin') {
+    navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true,
+    }).then(stream => {
+    console.log('primero');
+    
+         addVideoStream(myvideo, stream);
+         peer.on('call', function (call){// answer the call
+            call.answer(stream);
+            const video = document.createElement('video');
+            call.on('stream', uservideoStream => {
+                console.log('del otro', uservideoStream);
+                addVideoStream(video, uservideoStream);
+            })
+         })
+         socket.on('user-connected', (userId) => {
+            console.log('llega nuevo usuario');
+            conectToNewUser(userId, stream);
+         });
+         
+         
+    });
+}
+else {
+    peer.on('call', function (call){// answer the call
+        console.log('llega la llamada del admin');
+        call.answer();
         const video = document.createElement('video');
         call.on('stream', uservideoStream => {
+            console.log('del otro', uservideoStream);
             addVideoStream(video, uservideoStream);
         })
      })
-     socket.on('user-connected', (userId) => {
-        console.log('llega nuevo usuario');
-        conectToNewUser(userId, stream);
-     });
-     
-     
-});
+}
 
 
 peer.on('open', id => {// Every Peer object is assigned a random, unique ID when it's created.
@@ -56,21 +67,9 @@ function conectToNewUser(userId, stream) {
     setTimeout(() => {
         console.log('viene el id del entrante', userId);
         const call = peer.call(userId, stream); //Call a peer, providing our mediaStream
-        console.log(call, 'llamada');
-        const video = document.createElement('video');
-        call.on('stream', uservideoStream => { // `stream` is the MediaStream of the remote peer.
-            try {
-                console.log('media stream del remoto');
-                addVideoStream(video,uservideoStream);
-                
-            } catch (error) {
-                console.log(error,'error');
-            }
-        })
         call.on('close', () => {
-            video.remove();
         })
-    }, 2000);
+    }, 8000);
     
         
 }

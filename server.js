@@ -17,8 +17,8 @@ app.get('/', (req, res) => {
     res.redirect(`/${uuid()}`)
 })
 
-app.get('/:roomId', (req,res) => {
-    res.render('room', { roomId: req.params.roomId})
+app.get('/:roomId/:user', (req,res) => {
+    res.render('room', { roomId: req.params.roomId, user: req.params.user })
 })
 
 io.on('connection', (socket) => {
