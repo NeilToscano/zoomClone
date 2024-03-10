@@ -36,6 +36,7 @@ else {
         console.log('llega la llamada del admin');
         call.answer();
         const video = document.createElement('video');
+        video.muted = true;
         call.on('stream', uservideoStream => {
             console.log('del otro', uservideoStream);
             addVideoStream(video, uservideoStream);
