@@ -6,28 +6,30 @@ const myvideo = document.createElement('video');
 myvideo.muted = true;
 
 if(USER === 'admin') {
-    navigator.mediaDevices.getDisplayMedia({
-        video: true,
-        audio: true,
-    }).then(stream => {
-    console.log('primero');
-    
-         addVideoStream(myvideo, stream);
-         peer.on('call', function (call){// answer the call
-            call.answer(stream);
-            const video = document.createElement('video');
-            call.on('stream', uservideoStream => {
-                console.log('del otro', uservideoStream);
-                addVideoStream(video, uservideoStream);
-            })
-         })
-         socket.on('user-connected', (userId) => {
-            console.log('llega nuevo usuario');
-            conectToNewUser(userId, stream);
-         });
-         
-         
-    });
+    setTimeout(() => {
+        navigator.mediaDevices.getDisplayMedia({
+            video: true,
+            audio: true,
+        }).then(stream => {
+        console.log('primero');
+        
+             addVideoStream(myvideo, stream);
+             peer.on('call', function (call){// answer the call
+                call.answer(stream);
+                const video = document.createElement('video');
+                call.on('stream', uservideoStream => {
+                    console.log('del otro', uservideoStream);
+                    addVideoStream(video, uservideoStream);
+                })
+             })
+             socket.on('user-connected', (userId) => {
+                console.log('llega nuevo usuario');
+                conectToNewUser(userId, stream);
+             });
+             
+             
+        });
+    }, 5000);
 }
 else {
     peer.on('call', function (call){// answer the call

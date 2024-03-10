@@ -1,8 +1,8 @@
 const express = require('express');
-const { createServer } = require('node:http');
+const { createServer } = require('http');
 const { Server } = require('socket.io');
 const app = express(); // express
-
+require('dotenv').config()
 const server = createServer(app);// crear servidor
 const io = new Server(server); // socket io
 
@@ -11,7 +11,7 @@ const { v4: uuid } = require('uuid');
 app.set('view engine','ejs');
 app.use(express.static('public'));
 
-const port = 3000;
+const port = 300;
 
 app.get('/', (req, res) => {
     res.redirect(`/${uuid()}`)
@@ -29,6 +29,6 @@ io.on('connection', (socket) => {
     })
 })
 
-server.listen(port, () => {
+server.listen(process.env.PORT | 3000, () => {
     console.log(`escuchando en el puerto: ${ port}`);
 })
